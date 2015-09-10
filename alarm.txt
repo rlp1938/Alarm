@@ -1,0 +1,4 @@
+#alarm.txt - config file for alarm
+program=/usr/bin/cvlc
+data=/home/bob/tmp/avseq02.mpg
+
