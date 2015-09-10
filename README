@@ -1,0 +1,8 @@
+README for Alarm
+
+Two modes:
+1. elapsed time from now, ie cooking timer.
+2. time of day, ie an ordinary alarm clock.
+
+On first run you will prompted to edit a config file and name your
+media player, and the video to play when time is up.
