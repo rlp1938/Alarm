@@ -138,3 +138,43 @@ int direxists(const char *path)
 	if (S_ISDIR(sb.st_mode)) return 0;
 	return -1;
 } //direxists()
+
+fdata mem2str(char *pfrom, char *pto)
+{
+	/*
+	 * Checks that last char in memory is '\n', and if not reallocs
+	 * the memory area by 1 byte extra and copies '\n' to that byte.
+	 * Then replaces all '\n' with '\0' and returns the altered data.
+	 *
+	 * Usage:
+	 * fdata mydat = readfile("file", 0, 1);
+	 * mydat = mem2str(mydat.from, mydat.to);
+	 * ...
+	*/
+	char *from = pfrom;
+	char *to = pto;
+	// check last char is '\n'
+	if (*(to - 1) != '\n') {	// grab 1 more byte
+		char *old = from;
+		from = realloc(from, to - from + 1);
+		// been moved?
+		if (old != from) {
+			to = from + (to - old);	// keep old offset
+		}
+		*to = '\n';
+		to++;	// final offset
+	}
+	char *cp = from;
+	while (cp < to) {
+		char *eol = memchr(cp, '\n', to - cp);
+		if (eol) {
+			*eol = '\0';
+			cp = eol;
+		}
+		cp++;
+	}
+	fdata retdat;
+	retdat.from = from;
+	retdat.to = to;
+	return retdat;
+} // mem2str()
