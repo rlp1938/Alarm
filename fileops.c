@@ -139,6 +139,14 @@ int direxists(const char *path)
 	return -1;
 } //direxists()
 
+int fileexists(const char *path)
+{	// crude check for existence of a file.
+	struct stat sb;
+	if (stat(path, &sb) == -1) return -1;
+	if (S_ISREG(sb.st_mode)) return 0;
+	return -1;
+} //fileexists()
+
 fdata mem2str(char *pfrom, char *pto)
 {
 	/*
@@ -178,3 +186,64 @@ fdata mem2str(char *pfrom, char *pto)
 	retdat.to = to;
 	return retdat;
 } // mem2str()
+
+void doread(int fd, size_t bcount, char *result)
+{
+	char buf[PATH_MAX];
+	if (bcount > PATH_MAX) {
+		fprintf(stderr, "Requested size %li too big.\n", bcount);
+		exit(EXIT_FAILURE);
+	}
+	ssize_t res = read(fd, buf, bcount);
+	if (res == -1) {
+		perror(buf);
+		exit(EXIT_FAILURE);
+	}
+
+	strncpy(result, buf, res);
+	result[res] = '\0';
+} // doread()
+
+void dowrite(int fd, char *writebuf)
+{
+	ssize_t towrite = strlen(writebuf);
+	ssize_t written = write(fd, writebuf, towrite);
+	if (written != towrite) {
+		fprintf(stderr, "Expected to write %li bytes but wrote %li\n",
+				towrite, written);
+		exit(EXIT_FAILURE);
+	}
+} // dowrite()
+
+int getans(const char *prompt, const char *choices)
+{
+	/* Prompt the user with prompt then loop showing choices until
+	 * the user enters something contained in choices.
+	 * Alphabetic choices like "Yn" will be case insensitive.
+	*/
+
+	char c;
+	char buf[10];
+	char promptbuf[NAME_MAX];
+	char ucchoices[NAME_MAX];
+	memset(ucchoices, 0, NAME_MAX);
+	size_t l = strlen(choices);
+	size_t i;
+	for (i = 0; i < l; i++) {
+		ucchoices[i] = choices[i];
+	}
+	fputs(prompt, stdout);
+	sprintf(promptbuf, "Enter one of [%s] :", choices);
+	while (1) {
+		fputs(promptbuf, stdout);
+		char *cp = fgets(buf, 10, stdin);
+		if (!cp) {
+			perror("fgets");
+			exit(EXIT_FAILURE);
+		}
+
+		c = toupper(buf[0]);
+		if (strchr(choices, c)) break;
+	}
+	return c;
+} // getans()
