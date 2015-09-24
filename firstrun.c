@@ -1,6 +1,6 @@
 /*  firstrun.c
  *
- *	Copyright 2011 Bob Parker <rlp1938@gmail.com>
+ *	Copyright 2015 Bob Parker <rlp1938@gmail.com>
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -40,13 +40,12 @@ void firstrun(char *progname, ...)
 	*/
 	va_list ap;
 	char upath[NAME_MAX];
-	char spath[NAME_MAX];
 	char command[NAME_MAX];
 	sprintf(upath, "%s/.config/%s/", getenv("HOME"), progname);
 	sprintf(command, "mkdir -p %s", upath);
 	dosystem(command);
-
-	sprintf(spath, "/usr/local/share/%s/", progname);
+	char srcpath[80];
+	sprintf(srcpath, "/usr/local/share/%s/", progname);
 	va_start(ap, progname);	// allow this to work with 0 named files.
 	char *cp;
 	char fn[NAME_MAX];
@@ -54,7 +53,7 @@ void firstrun(char *progname, ...)
 		cp = va_arg(ap, char *);
 		if (!cp) break;	// last va must be NULL.
 		// file to read
-		sprintf(fn, "%s%s", spath, cp);
+		sprintf(fn, "%s%s", srcpath, cp);
 		fdata fdat = readfile(fn, 0, 1);
 		sprintf(fn, "%s%s", upath, cp);
 		writefile(fn, fdat.from, fdat.to, "w");

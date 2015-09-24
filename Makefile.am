@@ -6,7 +6,7 @@ bin_PROGRAMS=alarm
 alarm_SOURCES=alarm.c firstrun.c firtsrun.h fileops.c fileops.h
 
 aladir=$(datadir)/alarm
-ala_DATA=alarm.txt
+ala_data=torun.txt
 
 man_MANS=alarm.1
-EXTRA_BUILD=alarm.1 alarm.txt
+EXTRA_DIST=alarm.1

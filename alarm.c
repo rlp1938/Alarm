@@ -41,48 +41,36 @@ unsigned int addclocktime(time_t start, int hours, int minutes,
 													int seconds);
 
 char *helpmsg = "NAME\n\talarm - a program to notify when a user "
-" specified time has been reached.\n"
-"\nSYNOPSIS\n"
-"\tCooking timer mode:\n"
-"\talarm [option] mm\n"
-"\talarm [option] mm:ss |mm: |:ss\n"
-"\talarm [option] hh:mm:[ss]\n"
-"\tAlarm clock mode:\n"
-"\talarm [option] hh:mm:[ss] AM|PM (case insensitive).\n"
+" specified time has been reached\n"
+"\nSYNOPSIS\n\talarm [option] hh:mm:ss [A|a|P|p]\n"
+"\talarm [option] mm:ss [A|a|P|p]\n"
+"\talarm [option] hh:mm: [A|a|P|p]\n"
+"\talarm [option] mm [A|a|P|p]\n"
+"\talarm [option] :ss [A|a|P|p]\n"
 "\nDESCRIPTION\n\tThe program notifies the user when the input time is"
 " reached. \n"
-"\tBy default the input time is added to the start time, in other words"
-"\n\tcooking timer mode, but optionally an actual clock"
+"\tBy default the input time is added to the start time, in other words\n\t"
+"cooking timer mode, but optionally an actual clock"
  " time may be input,\n\tie alarm clock mode.\n"
 "See OPTIONS below.\n"
-"\nOPTIONS\n\t-h - prints this help then quits.\n"
-"\t-a - Interprets the input time as clock time, not an increment\n"
-"\tfrom program start. "
-"You should use the hh:mm:ss or hh:mm: time\n\tspecifiers when using"
-" this option.\n"
+"\nOPTIONS\n\t-h - prints helpfile.\n"
+"\t-a - Interprets the input time as clock time, not an increment\n\tfrom program start. "
+"You should use the hh:mm:ss or hh:mm: time\n\tspecifiers when using this option.\n"
 "NOTES"
-"\n\tTimes may be specified in 24 hour or AMPM format, case "
-"insensitive.\n\tIf PM is input"
-" then 12 hours will be added to the hours field if it's\n\tless than"
-" 12 but not otherwise. The only range check is that no number\n\t"
-"may be"
-" negative. No other range check will be done. Consequently a 90\n\t"
-"second interval may be input as :90 or 1:30.\n"
-"\tIn alarm mode the time specified will be the next occurrence of"
-" that\n\ttime so if you"
-" input 6:00 at 9 am then the alarm will be scheduled for\n\t6 am "
-"tomorrow.\n\tThe actual alarm notification is done by running a movie"
-" player to\n\tdisplay "
-"a short musical clip. Such clip together with the player"
-" is\n\tnamed in the file: "
-".config/alarm/alarm.txt.\n"
-"\tOn first run that file will be installed but you will need to edit\n"
-"\tthis file to name your media player and the file to be played.\n"
+"\n\tTimes may be specified in 24 hour or AMPM format, case insensitive.\n\tIf PM is input"
+" then 12 hours will be added to the hours field if it's\n\tless than 12 but not otherwise."
+" Apart from that no range checking will\n\tbe done. Consequently a 90 second interval"
+" may be input as :90 or 1:30.\n"
+"\tIn alarm mode the time specified will be the next occurrence of that\n\ttime so if you"
+" input 6:00 at 9 am then the alarm will be scheduled for\n\t6 am tomorrow."
+"\n\tThe actual alarm notification is done by running a movie player to\n\tdisplay "
+"a short musical clip. Such clip together with the player is\n\tnamed in the file:\n"
+"\t.config/alarm/alarm.txt or if that does not exist,\n\t/usr./local/etc/alarm/alarm.txt\n"
 ;
 void dohelp(int forced);
 
 
-char *memabslimit;// set by readfile, it's memmargin more than the data
+char *memabslimit;	// set by readfile, it's memmargin more than the data
 
 
 int main(int argc, char **argv)
@@ -160,35 +148,33 @@ int main(int argc, char **argv)
 	hours = minutes = seconds = 0;
 	char *wstr = strdup(timespec);
 	switch(numcolon) {
-		char *cp, *sep;
+		char *cp;
 		case 0:
 		// the number is minutes;
 		if (strlen(wstr)) minutes = strtol(wstr, NULL, 10);
-		if (minutes < 0) failure("No of minutes may not be negative\n");
 		break;
 		case 1:
 		// have mm:ss or :ss or mm:
-		sep = strchr(wstr, ':');
-		*sep = '\0';
+		cp = strchr(wstr, ':');
+		*cp = '\0';
 		if (strlen(wstr)) minutes = strtol(wstr, NULL, 10);
-		cp = sep + 1; // look at the second half
-		if (strlen(cp)) seconds = strtol(cp, NULL, 10);
-		if (minutes < 0 || seconds < 0)
-			failure("Data may not be negative\n");
+		cp++; // look at the second half
+		wstr = cp;
+		if (strlen(wstr)) seconds = strtol(wstr, NULL, 10);
 		break;
 		case 2:
 		// have hh:mm:ss or hh:mm:
-		sep = strchr(wstr, ':');
-		*sep = '\0';
+		cp = strchr(wstr, ':');
+		*cp = '\0';
 		if (strlen(wstr)) hours = strtol(wstr, NULL, 10);
-		cp = sep + 1; // next part
-		sep = strchr(cp, ':');
-		*sep = '\0';
-		if (strlen(cp)) minutes = strtol(cp, NULL, 10);
-		cp = sep + 1;
-		if (strlen(cp)) seconds = strtol(cp, NULL, 10);
-		if (hours < 0 || minutes < 0 || seconds < 0)
-			failure("Data may not be negative\n");
+		cp++; // next part
+		wstr = cp;
+		cp = strchr(wstr, ':');
+		*cp = '\0';
+		if (strlen(wstr)) minutes = strtol(wstr, NULL, 10);
+		cp++;
+		wstr = cp;
+		if (strlen(wstr)) seconds = strtol(wstr, NULL, 10);
 		break;
 		default:
 		fprintf(stderr,
@@ -224,7 +210,9 @@ void failure(const char *emsg) {
 	/*
 	 * The only exit point in the event of something invalid in command
 	*/
+
 	fprintf(stderr, "%s\n", emsg);
+
 	exit(EXIT_FAILURE);
 } // failure()
 
@@ -271,7 +259,7 @@ void runit(char *prog, char *param)
 	strcpy(buf, prog);
 	strcat(buf, " ");
 	strcat(buf, param);
-	dosystem(buf);
+	dosystem("./alarm.sh");
 }
 
 unsigned int addclocktime(time_t start, int hours, int minutes,
@@ -286,8 +274,7 @@ unsigned int addclocktime(time_t start, int hours, int minutes,
 		end->tm_hour = hours + 24;	// I think I can get away with this
 	} else if (hours == st->tm_hour && minutes < st->tm_min) {
 		end->tm_hour = hours + 24;
-	}	else { // will ignore the pathological case of hours and minutes
-				// == but seconds less
+	}	else { // will ignore the pathological case of hours and minutes == but seconds less
 		end->tm_hour = hours;
 	}
 	end->tm_sec = seconds;

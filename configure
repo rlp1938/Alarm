@@ -4667,7 +4667,7 @@ esac
 
 fi
 
-for ac_func in memchr strchr strdup strerror memset strtol
+for ac_func in memchr strchr strdup strerror memset
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"

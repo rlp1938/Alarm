@@ -23,7 +23,7 @@ AC_TYPE_SSIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_MKTIME
-AC_CHECK_FUNCS([memchr strchr strdup strerror memset strtol])
+AC_CHECK_FUNCS([memchr strchr strdup strerror memset])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

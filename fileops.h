@@ -27,12 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-#include <stdarg.h>
-#include <getopt.h>
-#include <ctype.h>
-#include <limits.h>
-#include <linux/limits.h>
-#include <libgen.h>
 
 #define _GNU_SOURCE 1
 
@@ -46,10 +40,5 @@ void writefile(const char *to_write, const char *from, const char *to,
 				const char *mode);
 FILE *dofopen(const char *fn, const char *fmode);
 int direxists(const char *path);
-fdata mem2str(char *pfrom, char *pto);
-int fileexists(const char *path);
-void doread(int fd, size_t bcount, char *result);
-void dowrite(int fd, char *writebuf);
-int getans(const char *prompt, const char *choices);
 
 #endif
