@@ -259,7 +259,7 @@ void runit(char *prog, char *param)
 	strcpy(buf, prog);
 	strcat(buf, " ");
 	strcat(buf, param);
-	dosystem("./alarm.sh");
+	dosystem(buf);
 }
 
 unsigned int addclocktime(time_t start, int hours, int minutes,
