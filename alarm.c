@@ -147,6 +147,7 @@ int main(int argc, char **argv)
 	numcolon = countchars(timespec, ':');
 	hours = minutes = seconds = 0;
 	char *wstr = strdup(timespec);
+	char *tofree = wstr;	// wstr gets altered.
 	switch(numcolon) {
 		char *cp;
 		case 0:
@@ -182,7 +183,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 		break;
 	}
-	free(wstr);
+	free(tofree);
 	// total seconds to elapse before alarm
 	if (ampm) {
 		if (!(cookingmode)) {
