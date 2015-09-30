@@ -3,7 +3,7 @@
 AM_CFLAGS=-Wall -Wextra -D_GNU_SOURCE=1
 
 bin_PROGRAMS=alarm
-alarm_SOURCES=alarm.c firstrun.c firtsrun.h fileops.c fileops.h
+alarm_SOURCES=alarm.c firstrun.c firstrun.h fileops.c fileops.h
 
 aladir=$(datadir)/alarm
 ala_data=torun.txt
