@@ -201,7 +201,9 @@ int main(int argc, char **argv)
 	while (aminute < totsec) {
 		sleep(aminute);
 		totsec -= aminute;
-		fprintf(stdout, "Remaining: %d seconds.\n", totsec);
+		if (cookingmode) {
+			fprintf(stdout, "Remaining: %d seconds.\n", totsec);
+		}
 	}
 	sleep(totsec);
 	runit(prog2run, mov2show);
