@@ -1,7 +1,7 @@
 
 /*      alarm.c
  *
- *	Copyright 2015 Bob Parker <rlp1938@gmail.com>
+ *	Copyright 2016 Bob Parker <rlp1938@gmail.com>
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -196,6 +196,13 @@ int main(int argc, char **argv)
 		totsec = seconds + 60 * minutes + 3600 * hours;
 	}
 	printf("Total seconds: %d\n", totsec);
+	// report every 60 seconds
+	int aminute = 60;	// seconds
+	while (aminute < totsec) {
+		sleep(aminute);
+		totsec -= aminute;
+		fprintf(stdout, "Remaining: %d seconds.\n", totsec);
+	}
 	sleep(totsec);
 	runit(prog2run, mov2show);
 	return 0;
