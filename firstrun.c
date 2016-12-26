@@ -20,12 +20,33 @@
 
 #include "firstrun.h"
 
-int checkfirstrun(char *progname)
+int checkfirstrun(char *progname, ...)
 {
+	va_list ap;
 	// construct the user's path to .config
 	char upath[PATH_MAX];
 	sprintf(upath, "%s/.config/%s/", getenv("HOME"), progname);
-	return direxists(upath);
+	if (direxists(upath)) return -1;
+	/* if the dir does not exist return failure, but if it does then
+	 * check that all files are in place and return failure if there
+	 * are any missing.
+	 * NB This will break every program using the earlier version.
+	*/
+	size_t len = strlen(upath);
+	if (upath[len-1] != '/') {
+		upath[len-1] = '/';
+		len++;
+	}
+	va_start(ap, progname);
+	char *cp;
+	while (1) {
+		cp = va_arg(ap, char *);
+		if(!cp) break;	// last va must be NULL
+		strcpy(upath + len, cp);
+		if(fileexists(upath)) return -1;
+	}
+	va_end(ap);
+	return 0;
 } // checkfirstrun()
 
 void firstrun(char *progname, ...)
